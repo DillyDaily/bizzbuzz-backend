@@ -1,0 +1,26 @@
+{
+  "name": "bizzbuzz",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.185.0",
+    "body-parser": "~1.17.1",
+    "cookie-parser": "~1.4.3",
+    "cors": "^2.8.3",
+    "debug": "~2.6.3",
+    "ejs": "~2.5.6",
+    "express": "~4.15.2",
+    "express-fileupload": "^0.3.0",
+    "knex": "^0.12.9",
+    "morgan": "~1.8.1",
+    "objection": "^0.7.12",
+    "pg": "^6.1.5",
+    "serve-favicon": "~2.4.2"
+  }
+}

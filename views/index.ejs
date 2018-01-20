@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>All businesses</title>
+    <style media="screen">
+      img{
+        width:150px;
+        height:150px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <% for (var i = 0; i<businesses.length; i++){ %>
+      <b>User <%= businesses[i].id %></b>
+      <p><%= businesses[i].first_name %></p>
+      <p><%= businesses[i].email %></p>
+      <img src="<%= businesses[i].image %>" alt="whoopsie">
+      <hr>
+    <% } %>
+
+    <form enctype="multipart/form-data" action="/businesses" method="post">
+      <input type="text" name="first_name" placeholder="Name">
+      <input type="email" name="email" placeholder="Email">
+      <input type="file" name="upload" accept=".jpg, .jpeg, .png">
+      <input type="submit" value="Create User">
+    </form>
+  </body>
+</html>
