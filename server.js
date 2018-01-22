@@ -13,6 +13,8 @@ const AWS = require('aws-sdk');
 const fileUpload = require('express-fileupload');
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json({extended:true}));
+app.use(cors());
+app.use(morgan(combine));
 
 // New Middleware!
 // app.use(fileUpload());
