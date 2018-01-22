@@ -1,5 +1,11 @@
 const knex = require('../db/knex');
 
+app.post('/register', (req, res) => {
+    res.send({
+        message: 'Success!'
+    })
+})
+
 // const businesses = require("../controllers/businesses.js");
 // const influencers = require("../controllers/influencers.js");
 
