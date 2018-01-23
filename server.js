@@ -86,6 +86,11 @@ app.delete('/delete/influencer/:id', function (req, res) {
   });
 });
 
+//Login
+app.get('/login', function (req, res) {
+  res.send({ message: "You've reached the login page!" })
+});
+
 app.listen(port, function () {
   console.log("running on localhost:"+port);
 });
