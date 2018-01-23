@@ -16,9 +16,12 @@ app.use(bodyParser.json({extended:true}));
 app.use(cors());
 // app.use(morgan(combined));
 
-
+//TESTING REGISTER PAGE
 app.get('/register', (req, res) => {
   res.send({ message: 'Success!' })
+});
+app.post('/register', (req, res) => {
+  res.send({ message: 'POST Success!' })
 });
 
 //USER - Splash Page
