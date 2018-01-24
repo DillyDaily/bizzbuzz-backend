@@ -9,7 +9,9 @@ const cors = require('cors');
 // const logger = require('morgan');
 const knex = require('./db/knex');
 const app = express();
-const AWS = require('aws-sdk');
+const router = express.Router()
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt-nodejs')
 const fileUpload = require('express-fileupload');
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json({extended:true}));
@@ -92,24 +94,36 @@ app.delete('/delete/influencer/:id', function (req, res) {
 });
 
 //Login
-app.get('/login', function (req, res) {
-  res.send({ message: "You've reached the login page!" })
+app.post('/login', function (req, res) {
+  const authLogin = require('./lib/authLogin')
+  let obj = {
+    email: 'email@email.com1',
+    password: 'blabla'
+  }
+
+  let token = authLogin('businesses', obj, res).then(token => {
+    res.send({token})
+  })
 });
 
+// app.post('/login', function (req, res) {
 
-// ----MESSAGES -----//
+// });
+
+
+// ----MESSAGES as a bizz -----//
 
 //Send a Message
 app.post('/contact/:id', function (req, res) { 
   knex('messages').insert(req.body).where('id', ).then(() => {
     knex('messages').select().then(message => res.json(message))
   })
-})
+});
 
 //Get All of your own messages
 app.get('/my/messages/:id'), function (req, res) {
   knex('messages').select().where('id', req.params.id).then(message => res.json(message))
-}
+};
 
 //Get One Message
 app.get('/message/:id', function (req, res) {
@@ -119,7 +133,7 @@ app.get('/message/:id', function (req, res) {
 //Reply to One Message
 app.post('/message/:id', function (req, res) {
   knex('messages')
-})
+});
 
 app.listen(port, function () {
   console.log("running on localhost:"+port);
