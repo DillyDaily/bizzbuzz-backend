@@ -40,36 +40,38 @@ app.get('/influencers', function (req, res, next) {
 });
 
 //Influencer as User - Get One Business Profile
-app.get('/business/:id', function (req, res) {
-knex('businesses').select().where('id', req.params.id).then(business => res.json(business))
+app.get('/profile/bizz/:id', function (req, res) {
+  knex('businesses').select().where('id', req.params.id).then(business => res.json(business))
 });
 
 //Business as User - Get One Influencer Profile
-app.get('/influencer/:id', function (req, res) {
-knex('influencers').select().where('id', req.params.id).then(business => res.json(business))
+app.get('/profile/buzz/:id', function (req, res) {
+  knex('influencers').select().where('id', req.params.id).then(business => res.json(business))
 });
 
-//Create New Business
-app.post('/business/create', function (req, res) {
+//Create New Business - Register & Create Profile
+app.post('/register/bizz', function (req, res) {
   knex('businesses').insert(req.body).then(() => {
       knex('businesses').select().then(business => res.json(business))
   });
 });
-//Create New Influencer
-app.post('/influencer/create', function (req, res) {
+
+//Create New Influencer - Register & Create Profile
+app.post('/register/buzz', function (req, res) {
   knex('influencers').insert(req.body).then(() => {
       knex('influencers').select().then(influencer => res.json(influencer))
   });
 });
 
 //Edit Business Profile
-app.patch('/business/edit/:id', function (req, res) {
+app.patch('/bizz/edit/:id', function (req, res) {
   knex('businesses').update(req.body).where('id', req.params.id).then(function () {
       knex('businesses').select().then(business => res.json(business))
   });
 });
+
 //Edit Influencer Profile
-app.patch('/influencer/edit/:id', function (req, res) {
+app.patch('/buzz/edit/:id', function (req, res) {
   knex('influencers').update(req.body).where('id', req.params.id).then(function () {
       knex('influencers').select().then(influencer => res.json(influencer))
   });
@@ -93,6 +95,31 @@ app.delete('/delete/influencer/:id', function (req, res) {
 app.get('/login', function (req, res) {
   res.send({ message: "You've reached the login page!" })
 });
+
+
+// ----MESSAGES -----//
+
+//Send a Message
+app.post('/contact/:id', function (req, res) { 
+  knex('messages').insert(req.body).where('id', ).then(() => {
+    knex('messages').select().then(message => res.json(message))
+  })
+})
+
+//Get All of your own messages
+app.get('/my/messages/:id'), function (req, res) {
+  knex('messages').select().where('id', req.params.id).then(message => res.json(message))
+}
+
+//Get One Message
+app.get('/message/:id', function (req, res) {
+  knex('messages').select().where('id', req.params.id).then(message => res.json(message))
+});
+
+//Reply to One Message
+app.post('/message/:id', function (req, res) {
+  knex('messages')
+})
 
 app.listen(port, function () {
   console.log("running on localhost:"+port);
