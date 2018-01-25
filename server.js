@@ -18,13 +18,6 @@ app.use(bodyParser.json({extended:true}));
 app.use(cors());
 // app.use(morgan(combined));
 
-//TESTING REGISTER PAGE
-app.get('/register', (req, res) => {
-  res.send({ message: 'Success!' })
-});
-app.post('/register', (req, res) => {
-  res.send({ message: 'POST Success!' })
-});
 
 //USER - Splash Page
 app.get('/', function(req, res, next) {
@@ -64,6 +57,9 @@ app.post('/register/buzz', function (req, res) {
       knex('influencers').select().then(influencer => res.json(influencer))
   });
 });
+
+//Business as User - Get Own Profile 
+app.get('/my/profile/:id')
 
 //Edit Business Profile
 app.patch('/bizz/edit/:id', function (req, res) {
@@ -115,7 +111,7 @@ app.post('/login', function (req, res) {
 
 //Send a Message
 app.post('/contact/:id', function (req, res) { 
-  knex('messages').insert(req.body.message).where('id', req.params.id).then(() => {
+  knex('messages').insert(req.body).where('id', req.params.id).then(() => {
     knex('messages').select().then(message => res.json(message))
   })
 });
