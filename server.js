@@ -115,7 +115,7 @@ app.post('/login', function (req, res) {
 
 //Send a Message
 app.post('/contact/:id', function (req, res) { 
-  knex('messages').insert(req.body).where('id', ).then(() => {
+  knex('messages').insert(req.body.message).where('id', req.params.id).then(() => {
     knex('messages').select().then(message => res.json(message))
   })
 });
