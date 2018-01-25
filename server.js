@@ -18,10 +18,9 @@ app.use(bodyParser.json({extended:true}));
 app.use(cors());
 // app.use(morgan(combined));
 
-
 //USER - Splash Page
 app.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  // res.render('index', { title: 'Express' });
 });
 
 //Influencer as User - Get All Businesses
@@ -41,7 +40,7 @@ app.get('/profile/bizz/:id', function (req, res) {
 
 //Business as User - Get One Influencer Profile
 app.get('/profile/buzz/:id', function (req, res) {
-  knex('influencers').select().where('id', req.params.id).then(business => res.json(business))
+  knex('influencers').select().where('id', req.params.id).then(influencer => res.json(influencer))
 });
 
 //Create New Business - Register & Create Profile
@@ -59,7 +58,9 @@ app.post('/register/buzz', function (req, res) {
 });
 
 //Business as User - Get Own Profile 
-app.get('/my/profile/:id')
+app.get('/my/profile/:id'), function (req, res) {
+  knex('businesses').select().where('id', req.body.id).then(business => res.json(business))
+}
 
 //Edit Business Profile
 app.patch('/bizz/edit/:id', function (req, res) {
@@ -102,11 +103,6 @@ app.post('/login', function (req, res) {
   })
 });
 
-// app.post('/login', function (req, res) {
-
-// });
-
-
 // ----MESSAGES as a bizz -----//
 
 //Send a Message
@@ -130,6 +126,41 @@ app.get('/message/:id', function (req, res) {
 app.post('/message/:id', function (req, res) {
   knex('messages')
 });
+
+//s3: 
+// app.get('/businesses', function(req, res){
+//   knex('businesses').then((results)=>{
+//     res.render('index', {businesses: results});
+//   })
+// });
+
+// app.post('/businesses', function(req, res) {
+//   console.log(req.body);
+//   console.log(req.files.upload);
+//   let uploadData = {
+//     Key: req.body.first_name,
+//     Body: req.files.upload.data,
+//     ContentType: req.files.upload.mimetype,
+//     ACL: 'public-read'
+//   }
+//   s3Bucket.putObject(uploadData, function(err, data){
+//     if(err){
+//       console.log(err);
+//       return;
+//     }
+
+//     knex('businesses').insert({
+//       first_name:req.body.first_name,
+//       email:req.body.email,
+//       image: baseAWSURL + uploadData.Key // We know that the key will be the end of the url
+//     }).then(()=>{
+//       res.redirect('/businesses');
+//     })
+//   });
+// });
+
+
+
 
 app.listen(port, function () {
   console.log("running on localhost:"+port);
