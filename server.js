@@ -45,10 +45,63 @@ app.get('/profile/buzz/:id', function (req, res) {
 
 //Create New Business - Register & Create Profile
 app.post('/register/bizz', function (req, res) {
-  knex('businesses').insert(req.body).then(() => {
-      knex('businesses').select().then(business => res.json(business))
+  let uploadData = {
+    Key: req.body.first_name,
+    Body: req.files.upload.data,
+    ContentType: req.files.upload.mimetype,
+    ACL: 'public-read'
+  }
+  s3Bucket.putObject(uploadData, function(err, data){
+    if(err){
+      console.log(err);
+      return;
+    }
+    knex('businesses').insert({
+      first_name:req.body.first_name,
+      last_name:req.body.last_name,
+      description:req.body.description,
+      password:req.body.password,
+      email:req.body.email,
+      image: baseAWSURL + uploadData.Key // We know that the key will be the end of the url
+    })
+    // .then(()=>{
+    //   res.redirect('/businesses');
+    // })
   });
 });
+
+
+
+//   knex('businesses').insert(req.body).then(() => {
+//       knex('businesses').select().then(business => res.json(business))
+//   });
+// });
+
+// app.post('/businesses', function(req, res) {
+//   console.log(req.body);
+//   console.log(req.files.upload);
+//   let uploadData = {
+//     Key: req.body.first_name,
+//     Body: req.files.upload.data,
+//     ContentType: req.files.upload.mimetype,
+//     ACL: 'public-read'
+//   }
+//   s3Bucket.putObject(uploadData, function(err, data){
+//     if(err){
+//       console.log(err);
+//       return;
+//     }
+//     knex('businesses').insert({
+//       first_name:req.body.first_name,
+//       email:req.body.email,
+//       image: baseAWSURL + uploadData.Key // We know that the key will be the end of the url
+//     }).then(()=>{
+//       res.redirect('/businesses');
+//     })
+//   });
+// });
+
+
 
 //Create New Influencer - Register & Create Profile
 app.post('/register/buzz', function (req, res) {
@@ -153,7 +206,6 @@ app.post('/message/:id', function (req, res) {
 //       console.log(err);
 //       return;
 //     }
-
 //     knex('businesses').insert({
 //       first_name:req.body.first_name,
 //       email:req.body.email,
