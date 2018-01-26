@@ -23,24 +23,20 @@ app.get('/', function(req, res, next) {
   // res.render('index', { title: 'Express' });
 });
 
-//Influencer as User - Get All Businesses
-app.get('/businesses', function (req, res, next) {
-  knex('businesses').select().then(business => res.json(business))
+//Login
+app.post('/login', function (req, res) {
+  const authLogin = require('./lib/authLogin')
+  let token = authLogin('businesses', req.body, res).then(token => {
+    res.send({token})
+  })
 });
 
-//Business as User - Get All Influencers
-app.get('/influencers', function (req, res, next) {
-  knex('influencers').select().then(influencer => res.json(influencer))
-});
-
-//Influencer as User - Get One Business Profile
-app.get('/profile/bizz/:id', function (req, res) {
-  knex('businesses').select().where('id', req.params.id).then(business => res.json(business))
-});
-
-//Business as User - Get One Influencer Profile
-app.get('/profile/buzz/:id', function (req, res) {
-  knex('influencers').select().where('id', req.params.id).then(influencer => res.json(influencer))
+//Create New Influencer - Register & Create Profile
+app.post('/register/buzz', function (req, res) {
+  const authRegister = require('./lib/authRegister')
+  knex('influencers').insert(req.body).returning('*').then(token => {
+    res.send({token})
+  })
 });
 
 //Create New Business - Register & Create Profile
@@ -65,10 +61,33 @@ app.post('/register/bizz', function (req, res) {
       image: baseAWSURL + uploadData.Key // We know that the key will be the end of the url
     })
     // .then(()=>{
-    //   res.redirect('/businesses');
+    //   res.redirect('/influencers');
     // })
   });
 });
+
+
+app.use(jwtAuth);
+//Influencer as User - Get All Businesses
+app.get('/businesses', function (req, res, next) {
+  knex('businesses').select().then(business => res.json(business))
+});
+
+//Business as User - Get All Influencers
+app.get('/influencers', function (req, res, next) {
+  knex('influencers').select().then(influencer => res.json(influencer))
+});
+
+//Influencer as User - Get One Business Profile
+app.get('/profile/bizz/:id', function (req, res) {
+  knex('businesses').select().where('id', req.params.id).then(business => res.json(business))
+});
+
+//Business as User - Get One Influencer Profile
+app.get('/profile/buzz/:id', function (req, res) {
+  knex('influencers').select().where('id', req.params.id).then(influencer => res.json(influencer))
+});
+
 
 
 
@@ -102,13 +121,6 @@ app.post('/register/bizz', function (req, res) {
 // });
 
 
-
-//Create New Influencer - Register & Create Profile
-app.post('/register/buzz', function (req, res) {
-  knex('influencers').insert(req.body).then(() => {
-      knex('influencers').select().then(influencer => res.json(influencer))
-  });
-});
 
 //Business as User - Get Own Profile 
 app.get('/my/bizz/profile/:id'), function (req, res) {
@@ -148,18 +160,6 @@ app.delete('/delete/influencer/:id', function (req, res) {
   });
 });
 
-//Login
-app.post('/login', function (req, res) {
-  const authLogin = require('./lib/authLogin')
-  let obj = {
-    email: 'email@email.com1',
-    password: 'blabla'
-  }
-
-  let token = authLogin('businesses', obj, res).then(token => {
-    res.send({token})
-  })
-});
 
 // ----MESSAGES as a bizz -----//
 
@@ -216,9 +216,35 @@ app.post('/message/:id', function (req, res) {
 //   });
 // });
 
-
-
-
 app.listen(port, function () {
   console.log("running on localhost:"+port);
 });
+
+function jwtAuth(req, res, next){
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  console.log(req.query)
+  // decode token
+  if (token) {
+ 
+    // verifies secret and checks exp
+    jwt.verify(token, 'shhhhh', function(err, decoded) {
+      if (err) {
+        return res.json({ success: false, message: 'Failed to authenticate token.' });
+      } else {
+        // if everything is good, save to request for use in other routes
+        req.decoded = decoded;
+        console.log(req.decoded);
+        next();
+      }
+    });
+ 
+  } else {
+ 
+    // if there is no token
+    // return an error
+    return res.status(403).send({
+        success: false,
+        message: 'No token provided.'
+    });
+  }
+ }
