@@ -58,19 +58,24 @@ app.post('/register/buzz', function (req, res) {
 });
 
 //Business as User - Get Own Profile 
-app.get('/my/profile/:id'), function (req, res) {
+app.get('/my/bizz/profile/:id'), function (req, res) {
   knex('businesses').select().where('id', req.body.id).then(business => res.json(business))
-}
+};
+
+//Influencer as User - Get Own Profile 
+app.get('/my/buzz/profile/:id'), function (req, res) {
+  knex('influencers').select().where('id', req.body.id).then(influencer => res.json(influencer))
+};
 
 //Edit Business Profile
-app.patch('/bizz/edit/:id', function (req, res) {
+app.patch('my/bizz/profile:id', function (req, res) {
   knex('businesses').update(req.body).where('id', req.params.id).then(function () {
       knex('businesses').select().then(business => res.json(business))
   });
 });
 
 //Edit Influencer Profile
-app.patch('/buzz/edit/:id', function (req, res) {
+app.patch('my/buzz/profile/:id', function (req, res) {
   knex('influencers').update(req.body).where('id', req.params.id).then(function () {
       knex('influencers').select().then(influencer => res.json(influencer))
   });
