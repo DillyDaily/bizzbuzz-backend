@@ -26,16 +26,15 @@ app.get('/', function(req, res, next) {
 //Login
 app.post('/login', function (req, res) {
   const authLogin = require('./lib/authLogin')
-  let token = authLogin('businesses', req.body, res).then(token => {
-    res.send({token})
+  let token = authLogin('businesses', req.body, res).then(user => {
+    res.send(user)
   })
 });
 
 //Create New Influencer - Register & Create Profile
 app.post('/register/buzz', function (req, res) {
-  const authRegister = require('./lib/authRegister')
-  knex('influencers').insert(req.body).returning('*').then(token => {
-    res.send({token})
+  knex('influencers').insert(req.body).then(() => {
+    res.json({ registered: true })
   })
 });
 
@@ -65,6 +64,37 @@ app.post('/register/bizz', function (req, res) {
     // })
   });
 });
+
+
+function jwtAuth(req, res, next){
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  console.log('req.query', req.query)
+  // decode token
+  if (token) {
+    // verifies secret and checks exp
+    jwt.verify(token, 'shhhhh', function(err, decoded) {
+
+      if (err) {
+        return res.json({ success: false, message: 'Failed to authenticate token.' });
+      } else {
+        // if everything is good, save to request for use in other routes
+        req.decoded = decoded;
+        console.log(req.decoded);
+        next();
+      }
+    });
+ 
+  } else {
+ 
+    // if there is no token
+    // return an error
+    return res.status(403).send({
+        success: false,
+        message: 'No token provided.'
+    });
+  }
+ }
+
 
 
 app.use(jwtAuth);
@@ -133,7 +163,7 @@ app.get('/my/buzz/profile/:id'), function (req, res) {
 };
 
 //Edit Business Profile
-app.patch('my/bizz/profile:id', function (req, res) {
+app.patch('my/bizz/profile/:id', function (req, res) {
   knex('businesses').update(req.body).where('id', req.params.id).then(function () {
       knex('businesses').select().then(business => res.json(business))
   });
@@ -165,13 +195,13 @@ app.delete('/delete/influencer/:id', function (req, res) {
 
 //Send a Message
 app.post('/contact/:id', function (req, res) { 
-  knex('messages').insert(req.body).where('id', req.params.id).then(() => {
+  knex('messages').insert(req.body).then(() => {
     knex('messages').select().then(message => res.json(message))
   })
 });
 
 //Get All of your own messages
-app.get('/my/messages/:id'), function (req, res) {
+app.get('/messages/:id'), function (req, res) {
   knex('messages').select().where('id', req.params.id).then(message => res.json(message))
 };
 
@@ -220,31 +250,3 @@ app.listen(port, function () {
   console.log("running on localhost:"+port);
 });
 
-function jwtAuth(req, res, next){
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-  console.log(req.query)
-  // decode token
-  if (token) {
- 
-    // verifies secret and checks exp
-    jwt.verify(token, 'shhhhh', function(err, decoded) {
-      if (err) {
-        return res.json({ success: false, message: 'Failed to authenticate token.' });
-      } else {
-        // if everything is good, save to request for use in other routes
-        req.decoded = decoded;
-        console.log(req.decoded);
-        next();
-      }
-    });
- 
-  } else {
- 
-    // if there is no token
-    // return an error
-    return res.status(403).send({
-        success: false,
-        message: 'No token provided.'
-    });
-  }
- }
