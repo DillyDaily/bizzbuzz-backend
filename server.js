@@ -43,30 +43,36 @@ app.post('/register/buzz', function (req, res) {
     res.json({ registered: true })
   })
 });
+//Create New Influencer - Register & Create Profile
+app.post('/register/bizz', function (req, res) {
+  knex('businesses').insert(req.body).then(() => {
+    res.json({ registered: true })
+  })
+});
 
 //Create New Business - Register & Create Profile
-app.post('/register/bizz', function (req, res) {
-  let uploadData = {
-    Key: req.body.first_name,
-    Body: req.files.upload.data,
-    ContentType: req.files.upload.mimetype,
-    ACL: 'public-read'
-  }
-  s3Bucket.putObject(uploadData, function(err, data){
-    if(err){
-      console.log(err);
-      return;
-    }
-    knex('businesses').insert({
-      first_name:req.body.first_name,
-      last_name:req.body.last_name,
-      description:req.body.description,
-      password:req.body.password,
-      email:req.body.email,
-      image: baseAWSURL + uploadData.Key // We know that the key will be the end of the url
-    })
-  });
-});
+// app.post('/register/bizz', function (req, res) {
+//   let uploadData = {
+//     Key: req.body.first_name,
+//     Body: req.files.upload.data,
+//     ContentType: req.files.upload.mimetype,
+//     ACL: 'public-read'
+//   }
+//   s3Bucket.putObject(uploadData, function(err, data){
+//     if(err){
+//       console.log(err);
+//       return;
+//     }
+//     knex('businesses').insert({
+//       first_name:req.body.first_name,
+//       last_name:req.body.last_name,
+//       description:req.body.description,
+//       password:req.body.password,
+//       email:req.body.email,
+//       image: baseAWSURL + uploadData.Key // We know that the key will be the end of the url
+//     })
+//   });
+// });
 
 
 function jwtAuth(req, res, next){

@@ -8,6 +8,10 @@ exports.up = function(knex, Promise) {
         table.text('email');
         table.text('password');
         table.text('image')
+        table.text('category')
+        table.text('topics')
+        table.text('city')
+        table.text('state')
         table.timestamps(true, true);
         });
     };
