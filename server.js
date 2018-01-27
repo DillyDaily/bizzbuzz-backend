@@ -71,10 +71,10 @@ app.post('/register/bizz', function (req, res) {
 
 function jwtAuth(req, res, next){
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
-  console.log('req.query', req.query)
+  // console.log('req.query', req.query)
   // decode token
   if (token) {
-    console.log('the token: ', token)
+    // console.log('the token: ', token)
     // verifies secret and checks exp
     jwt.verify(token, 'shhhhh', function(err, decoded) {
 
@@ -210,7 +210,7 @@ app.post('/contact/buzz/:id', function (req, res) {
 
 //Send a Message as a buzz to a bizz
 app.post('/contact/bizz/:id', function (req, res) { 
-  console.log('bizz contact request: ', req.params)
+  // console.log('bizz contact request: ', req.params)
   knex('messages').insert({
     message: req.body.message,
     influencers_id: req.body.influencers_id,
