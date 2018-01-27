@@ -16,17 +16,23 @@ const fileUpload = require('express-fileupload');
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json({extended:true}));
 app.use(cors());
-// app.use(morgan(combined));
 
 //USER - Splash Page
 app.get('/', function(req, res, next) {
-  // res.render('index', { title: 'Express' });
 });
 
-//Login
-app.post('/login', function (req, res) {
-  const authLogin = require('./lib/authLogin')
-  let token = authLogin('businesses', req.body, res).then(user => {
+//Login as BIZZ
+app.post('/login/bizz', function (req, res) {
+  const bizzAuthLogin = require('./lib/bizzAuthLogin')
+  let token = bizzAuthLogin('businesses', req.body, res).then(user => {
+    res.send(user)
+  })
+});
+
+//Login as BUZZ
+app.post('/login/buzz', function (req, res) {
+  const buzzAuthLogin = require('./lib/buzzAuthLogin')
+  let token = buzzAuthLogin('influencers', req.body, res).then(user => {
     res.send(user)
   })
 });
@@ -59,9 +65,6 @@ app.post('/register/bizz', function (req, res) {
       email:req.body.email,
       image: baseAWSURL + uploadData.Key // We know that the key will be the end of the url
     })
-    // .then(()=>{
-    //   res.redirect('/influencers');
-    // })
   });
 });
 
@@ -71,15 +74,16 @@ function jwtAuth(req, res, next){
   console.log('req.query', req.query)
   // decode token
   if (token) {
+    console.log('the token: ', token)
     // verifies secret and checks exp
     jwt.verify(token, 'shhhhh', function(err, decoded) {
 
       if (err) {
-        return res.json({ success: false, message: 'Failed to authenticate token.' });
+        return res.json({ success: false, message: 'Failed to authenticate token.' , error: err});
       } else {
         // if everything is good, save to request for use in other routes
         req.decoded = decoded;
-        console.log(req.decoded);
+        // console.log(req.decoded);
         next();
       }
     });
@@ -163,14 +167,14 @@ app.get('/my/buzz/profile/:id'), function (req, res) {
 };
 
 //Edit Business Profile
-app.patch('my/bizz/profile/:id', function (req, res) {
+app.patch('/my/bizz/profile/:id', function (req, res) {
   knex('businesses').update(req.body).where('id', req.params.id).then(function () {
       knex('businesses').select().then(business => res.json(business))
   });
 });
 
 //Edit Influencer Profile
-app.patch('my/buzz/profile/:id', function (req, res) {
+app.patch('/my/buzz/profile/:id', function (req, res) {
   knex('influencers').update(req.body).where('id', req.params.id).then(function () {
       knex('influencers').select().then(influencer => res.json(influencer))
   });
@@ -191,11 +195,27 @@ app.delete('/delete/influencer/:id', function (req, res) {
 });
 
 
-// ----MESSAGES as a bizz -----//
+// ----MESSAGES -----//
 
-//Send a Message
-app.post('/contact/:id', function (req, res) { 
-  knex('messages').insert(req.body).then(() => {
+//Send a Message as a bizz to a buzz
+app.post('/contact/buzz/:id', function (req, res) { 
+  knex('messages').insert({
+    message: req.body.message,
+    influencers_id: req.params.id,
+    businesses_id: req.decoded.id
+  }).then(() => {
+    knex('messages').select().then(message => res.json(message))
+  })
+});
+
+//Send a Message as a buzz to a bizz
+app.post('/contact/bizz/:id', function (req, res) { 
+  console.log('bizz contact request: ', req.params)
+  knex('messages').insert({
+    message: req.body.message,
+    influencers_id: req.body.influencers_id,
+    businesses_id: req.params.id
+  }).then(() => {
     knex('messages').select().then(message => res.json(message))
   })
 });
