@@ -50,6 +50,10 @@ app.post('/register/bizz', function (req, res) {
   })
 });
 
+//Logout
+app.get('/logout', function(req, res, next) {
+});
+
 //Create New Business - Register & Create Profile
 // app.post('/register/bizz', function (req, res) {
 //   let uploadData = {
@@ -106,8 +110,8 @@ function jwtAuth(req, res, next){
  }
 
 
-
 app.use(jwtAuth);
+
 //Influencer as User - Get All Businesses
 app.get('/businesses', function (req, res, next) {
   knex('businesses').select().then(business => res.json(business))
