@@ -231,8 +231,13 @@ app.post('/contact/bizz/:id', function (req, res) {
 });
 
 //Get All of your own messages
-app.get('/messages/:id'), function (req, res) {
-  knex('messages').select().where('id', req.params.id).then(message => res.json(message))
+app.get('/my/bizz/messages/:id'), function (req, res) {
+  knex('messages').select().where('businesses_id', req.params.id).then(message => res.json(message))
+};
+
+//Get All of your own messages
+app.get('/my/buzz/messages/:id'), function (req, res) {
+  knex('messages').select().where('influencers_id', req.params.id).then(message => res.json(message))
 };
 
 //Get One Message
