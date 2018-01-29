@@ -50,9 +50,6 @@ app.post('/register/bizz', function (req, res) {
   })
 });
 
-//Logout
-app.get('/logout', function(req, res, next) {
-});
 
 //Create New Business - Register & Create Profile
 // app.post('/register/bizz', function (req, res) {
@@ -230,12 +227,12 @@ app.post('/contact/bizz/:id', function (req, res) {
   })
 });
 
-//Get All of your own messages
+//Get All of your own messages - BIZZ
 app.get('/my/bizz/messages/:id'), function (req, res) {
   knex('messages').select().where('businesses_id', req.params.id).then(message => res.json(message))
 };
 
-//Get All of your own messages
+//Get All of your own messages - BUZZ
 app.get('/my/buzz/messages/:id'), function (req, res) {
   knex('messages').select().where('influencers_id', req.params.id).then(message => res.json(message))
 };
