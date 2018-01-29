@@ -176,7 +176,13 @@ app.get('/my/buzz/profile/:id'), function (req, res) {
 
 //Edit Business Profile
 app.patch('/my/bizz/profile/:id', function (req, res) {
-  knex('businesses').update(req.body).where('id', req.params.id).then(function () {
+  console.log("Hiiiii");
+  console.log("req.body", req.body);
+  let update = {
+    first_name: req.body.editedName,
+    description: req.body.editedDescription
+  }
+  knex('businesses').update(update, '*').where('id', req.params.id).then(function () {
       knex('businesses').select().then(business => res.json(business))
   });
 });
