@@ -1,3 +1,4 @@
+
 const env = 'development';
 const config = require('./knexfile.js')[env];
 const path = require('path');
@@ -81,15 +82,16 @@ function jwtAuth(req, res, next){
   // console.log('req.query', req.query)
   // decode token
   if (token) {
-    // console.log('the token: ', token)
+    console.log('the token: ', token)
     // verifies secret and checks exp
     jwt.verify(token, 'shhhhh', function(err, decoded) {
 
       if (err) {
         return res.json({ success: false, message: 'Failed to authenticate token.' , error: err});
       } else {
+        console.log(decoded)
         // if everything is good, save to request for use in other routes
-        req.decoded = decoded;
+        req.decoded = decoded.result[0];
         // console.log(req.decoded);
         next();
       }
@@ -236,7 +238,23 @@ app.post('/contact/bizz/:id', function (req, res) {
 
 //Get All of your own messages - BIZZ
 app.get('/my/bizz/messages/:id', function (req, res) {
-  knex('messages').select().where('businesses_id', req.params.id).then(message => res.json(message))
+  knex('messages').join("influencers", "influencers.id", "messages.influencers_id").where('businesses_id', req.params.id).orderBy("messages.created_at", "desc").then(messages =>{ 
+    
+    let inArr = [];
+    let msgs = messages.filter((message)=>{
+      console.log(inArr.includes(message.influencers_id))
+      console.log(inArr);
+      console.log(message.influencers_id)
+      if(!inArr.includes(message.influencers_id)){
+        inArr.push(message.influencers_id);
+        return true;
+      }
+      return false;
+    })
+    console.log(msgs);
+    res.json(msgs)
+  
+  })
 });
 
 //Get All of your own messages - BUZZ
@@ -244,9 +262,14 @@ app.get('/my/buzz/messages/:id', function (req, res) {
   knex('messages').select().where('influencers_id', req.params.id).then(message => res.json(message))
 });
 
-//Get One Message
-app.get('/message/:id', function (req, res) {
-  knex('messages').select().where('id', req.params.id).then(message => res.json(message))
+//Get Conversation
+app.get('/conversation/bizz/:influencers_id', function (req, res) {
+  knex('messages')
+    .join("influencers", "influencers.id", "messages.influencers_id")
+    .join("businesses", "businesses.id", "messages.businesses_id")
+    .where('businesses_id', req.decoded.id)
+    .where("influencers_id", req.params.influencers_id)
+    .then(message => res.json(message))
 });
 
 //Reply to One Message
