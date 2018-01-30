@@ -178,8 +178,8 @@ app.get('/my/buzz/profile/:id'), function (req, res) {
 
 //Edit Business Profile
 app.patch('/my/bizz/profile/:id', function (req, res) {
-  console.log("Hiiiii");
-  console.log("req.body", req.body);
+  // console.log("Hiiiii");
+  // console.log("req.body", req.body);
   let update = {
     first_name: req.body.editedName,
     description: req.body.editedDescription
@@ -191,7 +191,11 @@ app.patch('/my/bizz/profile/:id', function (req, res) {
 
 //Edit Influencer Profile
 app.patch('/my/buzz/profile/:id', function (req, res) {
-  knex('influencers').update(req.body).where('id', req.params.id).then(function () {
+  let update = {
+    first_name: req.body.editedName,
+    desciprtion: req.body.editedDescription
+  }
+  knex('influencers').update(update, '*').where('id', req.params.id).then(function () {
       knex('influencers').select().then(influencer => res.json(influencer))
   });
 });
@@ -238,20 +242,24 @@ app.post('/contact/bizz/:id', function (req, res) {
 
 //Get All of your own messages - BIZZ
 app.get('/my/bizz/messages/:id', function (req, res) {
-  knex('messages').join("influencers", "influencers.id", "messages.influencers_id").where('businesses_id', req.params.id).orderBy("messages.created_at", "desc").then(messages =>{ 
+  knex('messages')
+  .join("influencers", "influencers.id", "messages.influencers_id")
+  .where('businesses_id', req.params.id)
+  .orderBy("messages.created_at", "desc")
+  .then(messages =>{ 
     
     let inArr = [];
     let msgs = messages.filter((message)=>{
-      console.log(inArr.includes(message.influencers_id))
-      console.log(inArr);
-      console.log(message.influencers_id)
+      // console.log(inArr.includes(message.influencers_id))
+      // console.log(inArr);
+      // console.log(message.influencers_id)
       if(!inArr.includes(message.influencers_id)){
         inArr.push(message.influencers_id);
         return true;
       }
       return false;
     })
-    console.log(msgs);
+    // console.log(msgs);
     res.json(msgs)
   
   })
@@ -259,16 +267,40 @@ app.get('/my/bizz/messages/:id', function (req, res) {
 
 //Get All of your own messages - BUZZ
 app.get('/my/buzz/messages/:id', function (req, res) {
-  knex('messages').select().where('influencers_id', req.params.id).then(message => res.json(message))
+  knex('messages')
+  .join("businesses", "businesses.id", "messages.businesses_id")
+  .where('influencers_id', req.params.id)
+  .then(messages => {
+
+    let inArr = [];
+    let msgs = messeges.filter((message) => {
+      if(!inArr.includes(message.businesses_id)){
+        inArr.push(message.businesses_id);
+        return true;
+      }
+      return false;
+    })
+    res.json(messages)
+  })
 });
 
-//Get Conversation
+//Get Conversation - BIZZ
 app.get('/conversation/bizz/:influencers_id', function (req, res) {
   knex('messages')
     .join("influencers", "influencers.id", "messages.influencers_id")
     .join("businesses", "businesses.id", "messages.businesses_id")
     .where('businesses_id', req.decoded.id)
     .where("influencers_id", req.params.influencers_id)
+    .then(message => res.json(message))
+});
+
+//Get Conversation - BUZZ
+app.get('/conversation/buzz/:businesses_id', function (req, res) {
+  knex('messages')
+    .join("businesses", "businesses.id", "messages.businesses_id")
+    .join("influencers", "influencers.id", "messages.influencers_id")
+    .where('influencers_id', req.decoded.id)
+    .where("businesses_id", req.params.businesses_id)
     .then(message => res.json(message))
 });
 
