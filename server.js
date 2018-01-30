@@ -179,10 +179,19 @@ app.get('/my/buzz/profile/:id'), function (req, res) {
 
 //Edit Business Profile
 app.patch('/my/bizz/profile/:id', function (req, res) {
-  // console.log("req.body", req.body);
+  console.log("BIZZ PATCH req.body: ", req.body);
   let update = {
     first_name: req.body.editedName,
-    description: req.body.editedDescription
+    last_name: req.body.editedLastName,
+    email: req.body.editedEmail,
+    password: req.body.editedPassword,
+    topics: req.body.editedTopics,
+    city: req.body.editedCity,
+    state: req.body.editedState,
+    description: req.body.editedDescription,
+    image: req.body.editedImage,
+    category: req.body.editedCategory,
+    company_name: req.body.editedCompanyName
   }
   knex('businesses').update(update, '*').where('id', req.params.id).then(function () {
       knex('businesses').select().then(business => res.json(business))
@@ -193,7 +202,15 @@ app.patch('/my/bizz/profile/:id', function (req, res) {
 app.patch('/my/buzz/profile/:id', function (req, res) {
   let update = {
     first_name: req.body.editedName,
-    description: req.body.editedDescription
+    last_name: req.body.editedLastName,
+    email: req.body.editedEmail,
+    password: req.body.editedPassword,
+    topics: req.body.editedTopics,
+    city: req.body.editedCity,
+    state: req.body.editedState,
+    description: req.body.editedDescription,
+    image: req.body.editedImage,
+    category: req.body.editedCategory
   }
   knex('influencers').update(update, '*').where('id', req.params.id).then(function () {
       knex('influencers').select().then(influencer => res.json(influencer))
