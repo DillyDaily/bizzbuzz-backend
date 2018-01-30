@@ -241,6 +241,10 @@ app.post('/contact/buzz/:id', function (req, res) {
     message: req.body.message,
     influencers_id: req.params.id,
     businesses_id: req.body.businesses_id
+
+    // message: req.body.message,
+    // businesses_id: req.body.businesses_id,
+    // influencers_id: req.params.id
   }).then(() => {
     knex('messages').select().then(message => res.json(message))
   })
@@ -253,6 +257,7 @@ app.post('/contact/bizz/:id', function (req, res) {
     message: req.body.message,
     influencers_id: req.body.influencers_id,
     businesses_id: req.params.id
+
   }).then(() => {
     knex('messages').select().then(message => res.json(message))
   })
@@ -287,6 +292,7 @@ app.get('/my/buzz/messages/:id', function (req, res) {
   knex('messages')
   .join("businesses", "businesses.id", "messages.businesses_id")
   .where('influencers_id', req.params.id)
+  .orderBy("messages.created_at", "desc")
   .then(messages => {
 
     let inArr = [];
