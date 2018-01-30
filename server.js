@@ -44,7 +44,8 @@ app.post('/register/buzz', function (req, res) {
     res.json({ registered: true })
   })
 });
-//Create New Influencer - Register & Create Profile
+
+//Create New Business - Register & Create Profile
 app.post('/register/bizz', function (req, res) {
   knex('businesses').insert(req.body).then(() => {
     res.json({ registered: true })
@@ -193,7 +194,7 @@ app.patch('/my/bizz/profile/:id', function (req, res) {
 app.patch('/my/buzz/profile/:id', function (req, res) {
   let update = {
     first_name: req.body.editedName,
-    desciprtion: req.body.editedDescription
+    description: req.body.editedDescription
   }
   knex('influencers').update(update, '*').where('id', req.params.id).then(function () {
       knex('influencers').select().then(influencer => res.json(influencer))
