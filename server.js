@@ -179,7 +179,6 @@ app.get('/my/buzz/profile/:id'), function (req, res) {
 
 //Edit Business Profile
 app.patch('/my/bizz/profile/:id', function (req, res) {
-  // console.log("Hiiiii");
   // console.log("req.body", req.body);
   let update = {
     first_name: req.body.editedName,
@@ -223,7 +222,7 @@ app.post('/contact/buzz/:id', function (req, res) {
   knex('messages').insert({
     message: req.body.message,
     influencers_id: req.params.id,
-    businesses_id: req.decoded.id
+    businesses_id: req.body.businesses_id
   }).then(() => {
     knex('messages').select().then(message => res.json(message))
   })
@@ -251,8 +250,7 @@ app.get('/my/bizz/messages/:id', function (req, res) {
     
     let inArr = [];
     let msgs = messages.filter((message)=>{
-      // console.log(inArr.includes(message.influencers_id))
-      // console.log(inArr);
+  
       // console.log(message.influencers_id)
       if(!inArr.includes(message.influencers_id)){
         inArr.push(message.influencers_id);
