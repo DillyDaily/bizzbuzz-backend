@@ -272,7 +272,7 @@ app.get('/my/buzz/messages/:id', function (req, res) {
   .then(messages => {
 
     let inArr = [];
-    let msgs = messeges.filter((message) => {
+    let msgs = messages.filter((message) => {
       if(!inArr.includes(message.businesses_id)){
         inArr.push(message.businesses_id);
         return true;
