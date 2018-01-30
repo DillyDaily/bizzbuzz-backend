@@ -200,6 +200,7 @@ app.patch('/my/bizz/profile/:id', function (req, res) {
 
 //Edit Influencer Profile
 app.patch('/my/buzz/profile/:id', function (req, res) {
+  console.log("BUZZ PATCH req.body: ", req.body);
   let update = {
     first_name: req.body.editedName,
     last_name: req.body.editedLastName,
@@ -209,8 +210,8 @@ app.patch('/my/buzz/profile/:id', function (req, res) {
     city: req.body.editedCity,
     state: req.body.editedState,
     description: req.body.editedDescription,
-    image: req.body.editedImage,
-    category: req.body.editedCategory
+    // image: req.body.editedImage,
+    // category: req.body.editedCategory
   }
   knex('influencers').update(update, '*').where('id', req.params.id).then(function () {
       knex('influencers').select().then(influencer => res.json(influencer))
