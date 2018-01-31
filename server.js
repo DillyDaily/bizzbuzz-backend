@@ -210,6 +210,7 @@ app.patch('/my/buzz/profile/:id', function (req, res) {
     city: req.body.editedCity,
     state: req.body.editedState,
     description: req.body.editedDescription,
+    personal_brand: req.body.editedPersonalBrand,
     // image: req.body.editedImage,
     // category: req.body.editedCategory
   }
@@ -314,6 +315,7 @@ app.get('/conversation/bizz/:influencers_id', function (req, res) {
     .join("businesses", "businesses.id", "messages.businesses_id")
     .where('businesses_id', req.decoded.id)
     .where("influencers_id", req.params.influencers_id)
+    .orderBy("messages.created_at", "desc")
     .then(message => res.json(message))
 });
 
@@ -324,6 +326,7 @@ app.get('/conversation/buzz/:businesses_id', function (req, res) {
     .join("influencers", "influencers.id", "messages.influencers_id")
     .where('influencers_id', req.decoded.id)
     .where("businesses_id", req.params.businesses_id)
+    .orderBy("messages.created_at", "desc")
     .then(message => res.json(message))
 });
 
