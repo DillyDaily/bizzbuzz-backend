@@ -240,8 +240,8 @@ app.delete('/delete/influencer/:id', function (req, res) {
 app.post('/contact/buzz/:id', function (req, res) { 
   knex('messages').insert({
     message: req.body.message,
-    influencers_id: req.params.id,
-    businesses_id: req.body.businesses_id
+    businesses_id: req.body.businesses_id,
+    influencers_id: req.params.id
 
     // message: req.body.message,
     // businesses_id: req.body.businesses_id,
