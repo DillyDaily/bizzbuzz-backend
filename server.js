@@ -303,7 +303,7 @@ app.get('/my/buzz/messages/:id', function (req, res) {
       }
       return false;
     })
-    res.json(messages)
+    res.json(msgs)
   })
 });
 
