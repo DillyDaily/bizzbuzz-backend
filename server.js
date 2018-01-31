@@ -83,14 +83,14 @@ function jwtAuth(req, res, next){
   // console.log('req.query', req.query)
   // decode token
   if (token) {
-    console.log('the token: ', token)
+    // console.log('the token: ', token)
     // verifies secret and checks exp
     jwt.verify(token, 'shhhhh', function(err, decoded) {
 
       if (err) {
         return res.json({ success: false, message: 'Failed to authenticate token.' , error: err});
       } else {
-        console.log(decoded)
+        // console.log(decoded)
         // if everything is good, save to request for use in other routes
         req.decoded = decoded.result[0];
         // console.log(req.decoded);
